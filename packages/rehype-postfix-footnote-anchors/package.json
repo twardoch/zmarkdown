@@ -1,6 +1,6 @@
 {
   "name": "rehype-postfix-footnote-anchors",
-  "version": "1.0.5",
+  "version": "1.0.8",
   "repository": {
     "url": "https://github.com/zestedesavoir/zmarkdown/tree/master/packages/rehype-postfix-footnote-anchors",
     "type": "git"
@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "pretest": "eslint .",
-    "prepare": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
+    "build": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
     "test": "jest",
     "coverage": "jest --coverage"
   },

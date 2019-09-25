@@ -128,6 +128,24 @@ describe('mock server tests', () => {
     )
   })
 
+  test('default big images', () => {
+    const defaultImagePath = 'default.png'
+    const file = `![](http://localhost:27273/ok.png)`
+    const html = `<p><img src="${downloadDestination}/${defaultImagePath}"></p>`
+
+    const render = renderFactory({
+      maxFileSize: 400,
+      defaultImagePath,
+      defaultOn: {
+        fileTooBig: true,
+      },
+    })
+
+    return render(file).then(vfile => {
+      expect(vfile.contents).toBe(html)
+    })
+  })
+
   test('reports bad SVG', () => {
     const file = `![](http://localhost:27273/bad.svg)`
     const html = `<p><img src="http://localhost:27273/bad.svg"></p>`
@@ -151,6 +169,23 @@ describe('mock server tests', () => {
     return render(file).then(vfile => {
       expect(firstMsg(vfile)).toBe(
         'Content-Type of http://localhost:27273/wrong-mime.txt is not an image/ type')
+      expect(vfile.contents).toBe(html)
+    })
+  })
+
+  test('default wrong mime', () => {
+    const defaultImagePath = 'default.png'
+    const file = `![](http://localhost:27273/wrong-mime.txt)`
+    const html = `<p><img src="${downloadDestination}/${defaultImagePath}"></p>`
+
+    const render = renderFactory({
+      defaultImagePath,
+      defaultOn: {
+        mimeType: true,
+      },
+    })
+
+    return render(file).then(vfile => {
       expect(vfile.contents).toBe(html)
     })
   })
@@ -434,6 +469,23 @@ describe('mock server tests', () => {
     })
   })
 
+  test('default bad status code', () => {
+    const defaultImagePath = 'default.png'
+    const file = `![](http://localhost:27273/noimage.png)`
+    const html = `<p><img src="${downloadDestination}/${defaultImagePath}"></p>`
+
+    const render = renderFactory({
+      defaultImagePath,
+      defaultOn: {
+        statusCode: true,
+      },
+    })
+
+    return render(file).then(vfile => {
+      expect(vfile.contents).toBe(html)
+    })
+  })
+
   test('reports DNS resolution issues', () => {
     const file = `![](http://doesnotexist-kqwtkk78.com)`
     const html = `<p><img src="http://doesnotexist-kqwtkk78.com"></p>`
@@ -441,8 +493,8 @@ describe('mock server tests', () => {
     const render = renderFactory({httpRequestTimeout: 500})
 
     return render(file).then(vfile => {
-      expect(firstMsg(vfile)).toBe(
-        'getaddrinfo ENOTFOUND doesnotexist-kqwtkk78.com doesnotexist-kqwtkk78.com:80')
+      expect(firstMsg(vfile)).toContain(
+        'getaddrinfo ENOTFOUND doesnotexist-kqwtkk78.com')
       expect(vfile.contents).toBe(html)
     })
   })

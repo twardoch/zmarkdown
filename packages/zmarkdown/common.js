@@ -40,6 +40,7 @@ const rehypeKatex = require('rehype-katex')
 const rehypeLineNumbers = require('./utils/rehype-line-numbers')
 const rehypePostfixFootnotes = require('rehype-postfix-footnote-anchors')
 const rehypeSlug = require('rehype-slug')
+const rehypeSanitize = require('rehype-sanitize')
 
 const rehypeStringify = require('rehype-stringify')
 
@@ -121,6 +122,25 @@ const zmdParser = (config, extraRemarkPlugins = []) => {
       }
     })
 
+  if (config.stats) {
+    mdProcessor.use(() => (tree, vfile) => {
+      let signs = 0
+      let words = 0
+      visit(tree, 'text', (node) => {
+        signs += node.value.length
+        const wordReg = node.value.match(/\w+/g)
+        if (wordReg) words += wordReg.length
+      })
+      visit(tree, 'paragraph', (node) => {
+        signs += 1
+      })
+      vfile.data.stats = {
+        signs: signs,
+        words: words,
+      }
+    })
+  }
+
   for (const record of extraRemarkPlugins) {
     mdProcessor.use(record.obj, record.option)
   }
@@ -147,6 +167,7 @@ function getHTMLProcessor (config) {
     .use(rehypeFootnotesTitles, config.remarkConfig.footnotesTitles)
     .use(rehypePostfixFootnotes, `-${shortid.generate()}`)
     .use(rehypeKatex, config.remarkConfig.katex)
+    .use(rehypeSanitize, config.remarkConfig.sanitize)
     .use(() => (tree) => {
       Object.keys(wrappers).forEach(nodeName =>
         wrappers[nodeName].forEach(wrapper => {

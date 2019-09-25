@@ -1,6 +1,6 @@
 {
   "name": "remark-heading-trailing-spaces",
-  "version": "0.0.27",
+  "version": "0.0.30",
   "repository": {
     "url": "https://github.com/zestedesavoir/zmarkdown/tree/master/packages/remark-heading-trailing-spaces",
     "type": "git"
@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "pretest": "eslint .",
-    "prepare": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
+    "build": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
     "test": "jest",
     "coverage": "jest --coverage"
   },

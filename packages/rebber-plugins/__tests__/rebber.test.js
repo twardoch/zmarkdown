@@ -122,6 +122,10 @@ test('heading with custom config', () => {
         (val) => `\\LevelSixTitle{${val}}\n`,
         (val) => `\\LevelSevenTitle{${val}}\n`,
       ],
+      image: {
+        inlineImage: (node) => `\\inlineImage{${node.url}}`,
+        image: (node) => `\\image{${node.url}}`,
+      },
     })
     .processSync(fixture)
 
@@ -168,7 +172,12 @@ test('table', () => {
   const fixture = fixtures['table']
   const {contents} = unified()
     .use(reParse)
-    .use(rebber, {})
+    .use(rebber, {
+      image: {
+        inlineImage: (node) => `\\inlineImage{${node.url}}`,
+        image: (node) => `\\image{${node.url}}`,
+      },
+    })
     .processSync(fixture)
 
   expect(contents.trim()).toMatchSnapshot()
@@ -184,6 +193,7 @@ test('gridTable', () => {
     .processSync(fixture)
 
   expect(contents.trim()).toMatchSnapshot()
+  expect(contents.trim()).not.toContain('\\number-of-column')
 })
 
 test('blockquote', () => {

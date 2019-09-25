@@ -1,16 +1,16 @@
 {
-  "presets": [
-    [
-      "env",
-      {
-        "targets": "> 0.5%, last 2 versions, Firefox ESR, not dead, ie >=11"
-      }
-    ]
+  "ignore": [
+    "**/core-js"
   ],
-  "plugins": [],
-  "env": {
-    "development": {
-      "sourceMaps": "inline"
-    }
-  }
+  "sourceType": "unambiguous",
+  "presets": [
+    [ "@babel/preset-env", {
+      "modules": false,
+      "targets": {
+        "browsers": "> 0.5%, last 2 versions, Firefox ESR, not dead, ie >=11"
+      },
+      "useBuiltIns": "usage"
+    }]
+  ],
+  "plugins": []
 }

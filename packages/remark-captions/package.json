@@ -1,6 +1,6 @@
 {
   "name": "remark-captions",
-  "version": "2.1.6",
+  "version": "2.1.8",
   "repository": {
     "url": "https://github.com/zestedesavoir/zmarkdown/tree/master/packages/remark-captions",
     "type": "git"
@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "pretest": "eslint .",
-    "prepare": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
+    "build": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
     "test": "jest",
     "coverage": "jest --coverage"
   },

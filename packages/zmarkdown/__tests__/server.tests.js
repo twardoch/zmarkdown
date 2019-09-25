@@ -121,6 +121,27 @@ describe('HTML endpoint', () => {
     expect(rendered).not.toContain('view-box')
     expect(rendered).not.toContain('preserve-aspect-ratio')
   })
+
+  it('produces statistics when configured', async () => {
+    const text = dedent(`
+    7 chars
+    # 13 chars here
+    
+    [13 chars here](https.//github.com/zestedesavoir/zmarkdown)
+    
+    ![13 chars here](https.//github.com/zestedesavoir/zmarkdown)
+    
+    ![no chars here](https.//github.com/zestedesavoir/zmarkdown)
+    Figure: 13 chars here
+    `)
+    const response = await a.post(html, {md: text, opts: {stats: true}})
+    expect(response.status).toBe(200)
+
+    const [string, metadata] = response.data
+    expect(string).toMatchSnapshot()
+    expect(metadata.stats.signs).toBe(61)
+    expect(metadata.stats.words).toBe(14)
+  })
 })
 
 describe('LaTeX endpoint', () => {
@@ -188,6 +209,32 @@ describe('LaTeX endpoint', () => {
     expect(rendered).toMatch(regex)
     const [, dir, file, ext] = rendered.match(regex)
     return expect(rm(`${destination}/${dir}`, `${file}.${ext}`)).resolves.toBe('ok')
+  })
+
+  it('properly defaults image', async () => {
+    const destination = process.env.DEST || `${__dirname}/../public/`
+    const response = await a.post(latex, {
+      md: `![](${u('/static/noimage.png')})`,
+      opts: {inline: true, images_download_dir: destination},
+    })
+
+    const rendered = response.data[0]
+    expect(rendered).toContain('black.png')
+  })
+
+  it('properly defaults image with custom path', async () => {
+    const destination = process.env.DEST || `${__dirname}/../public/`
+    const response = await a.post(latex, {
+      md: `![](${u('/static/noimage.png')})`,
+      opts: {
+        inline: true,
+        images_download_dir: destination,
+        images_download_default: 'default.png',
+      },
+    })
+
+    const rendered = response.data[0]
+    expect(rendered).toContain('default.png')
   })
 })
 
@@ -294,6 +341,6 @@ describe('EPUB endpoint', () => {
     const [rendered, , messages] = response.data
     expect(messages[0].message).toMatch("Protocol 'file:' not allowed.")
 
-    expect(rendered).toBe('<p><img src="file://tmp/passwd"></p>')
+    expect(rendered).toBe('<p><img></p>')
   })
 })

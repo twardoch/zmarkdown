@@ -221,6 +221,14 @@ describe('ping', () => {
   })
 })
 
+describe('oembed', () => {
+  it(`correctly render oEmbed iframe`, () => {
+    const input = '!(https://soundcloud.com/paresh-sankhe/sets/h2g2)'
+
+    return expect(renderString(input)).resolves.toContain('<iframe')
+  })
+})
+
 describe('smileys', () => {
   it(`translates >_<`, () => {
     const input = 'This is funny >_<'
@@ -331,3 +339,40 @@ describe('code highlight special cases', () => {
     remarkConfig._test = true
   })
 })
+
+describe('Sanitize HTML to prevent XSS', () => {
+  beforeEach(() => {
+    remarkConfig._test = false
+  })
+
+  it('XSS test', () => {
+    const input = dedent `
+    [test XSS](javascript:alert(11))
+    `
+    // remove href
+    return expect(renderString(input)).resolves.toContain('<a>')
+  })
+  it('auto-link XSS', () => {
+    const input = dedent `
+    <javascript:console.log("XSS")>
+    `
+    // Not auto-link anymore
+    return expect(renderString(input)).resolves.not.toContain('</a>')
+  })
+  it('advanced XSS', () => {
+    const input = dedent `
+    This is [not obvious](   lives\0cript:promp('It works !')) !
+    `
+    return expect(renderString(input)).resolves.toMatchSnapshot()
+  })
+  it('Iframe XSS', () => {
+    const input = dedent `
+    !(javascript:alert("XSS"))
+    `
+    return expect(renderString(input)).resolves.not.toContain('iframe')
+  })
+  afterEach(() => {
+    remarkConfig._test = true
+  })
+})
+

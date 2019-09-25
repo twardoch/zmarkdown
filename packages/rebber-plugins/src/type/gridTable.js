@@ -4,6 +4,8 @@ const clone = require('clone')
 const tableCell = require('rebber/dist/types/tableCell')
 const tableRow = require('rebber/dist/types/tableRow')
 const table = require('rebber/dist/types/table')
+const text = require('rebber/dist/types/text')
+const paragraph = require('rebber/dist/types/paragraph')
 
 /* Expose. */
 module.exports = gridTable
@@ -49,15 +51,23 @@ class GridTableStringifier {
     const overriddenCtx = clone(ctx)
     this.colIndex++
     overriddenCtx.tableCell = undefined
-    let baseText = tableCell(overriddenCtx, node).trim().replace(/\n/g, ' \\par ')
-
+    // we have to replace \n by \par only in text node, not in other
+    // see #352
+    overriddenCtx.overrides.text = (c, n, index, parent) => text(c, n, index, parent).replace(/\n/g, ' \\par ')
+    overriddenCtx.overrides.paragraph = (c, n) => `${paragraph(c, n).trim()} \\par  \\par `
+    let baseText = tableCell(overriddenCtx, node).trim()
+    while (baseText.substring(baseText.length - '\\par'.length) === '\\par') {
+      baseText = baseText.substring(0, baseText.length - '\\par'.length).trim()
+    }
     if (node.data && node.data.hProperties.rowspan > 1) {
       this.currentSpan = node.data.hProperties.rowspan
       this.multiLineCellIndex = this.colIndex
       baseText = `\\multirow{${node.data.hProperties.rowspan}}{*}{${baseText}}`
       this.colspan = node.data.hProperties.colspan > 1 ? node.data.hProperties.colspan : 1
     } else if (node.data && node.data.hProperties.colspan > 1) {
-      baseText = `\\multicolumn{${node.data.hProperties.colspan}}{|c|}{${baseText}}`
+      const colspan = node.data.hProperties.colspan
+      const colDim = `p{\\dimexpr(\\linewidth) * ${colspan} / \\number-of-column}`
+      baseText = `\\multicolumn{${colspan}}{|${colDim}|}{${baseText}}`
     }
 
     if (node.data && node.data.hProperties.colspan > 1) {
@@ -130,7 +140,7 @@ class GridTableStringifier {
   }
 
   gridTableHeaderParse () {
-    const headers = `|p{\\linewidth / ${this.nbOfColumns}}`.repeat(this.nbOfColumns)
+    const headers = `|p{\\dimexpr(\\linewidth) / ${this.nbOfColumns}}`.repeat(this.nbOfColumns)
     return `${headers}|`
   }
 
@@ -147,5 +157,9 @@ function gridTable (ctx, node) {
   overriddenCtx.tableCell = stringifier.gridTableCell.bind(stringifier)
   overriddenCtx.tableRow = stringifier.gridTableRow.bind(stringifier)
   overriddenCtx.headerParse = stringifier.gridTableHeaderParse.bind(stringifier)
-  return table(overriddenCtx, node)
+
+  overriddenCtx.image = overriddenCtx.image ? overriddenCtx.image : {}
+  overriddenCtx.image.inlineMatcher = () => true
+
+  return table(overriddenCtx, node).replace(/\\number-of-column/gm, stringifier.nbOfColumns)
 }

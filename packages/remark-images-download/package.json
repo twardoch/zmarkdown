@@ -1,6 +1,6 @@
 {
   "name": "remark-images-download",
-  "version": "2.8.5",
+  "version": "2.9.0",
   "repository": {
     "url": "https://github.com/zestedesavoir/zmarkdown/tree/master/packages/remark-images-download",
     "type": "git"
@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "pretest": "eslint .",
-    "prepare": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
+    "build": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
     "test": "jest",
     "coverage": "jest --coverage"
   },

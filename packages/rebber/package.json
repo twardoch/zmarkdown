@@ -1,6 +1,6 @@
 {
   "name": "rebber",
-  "version": "3.1.2",
+  "version": "3.1.5",
   "description": "Stringifies MDAST to LaTeX",
   "repository": "https://github.com/zestedesavoir/zmarkdown/tree/master/packages/rebber",
   "author": "Victor Felder <victor@draft.li> (https://draft.li)",
@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "pretest": "eslint .",
-    "prepare": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
+    "build": "del-cli dist && cross-env BABEL_ENV=production babel src --out-dir dist",
     "test": "jest",
     "coverage": "jest --coverage"
   },

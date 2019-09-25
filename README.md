@@ -35,6 +35,10 @@ This project uses [Jest][jest] for testing. It is recommended to install the Jes
 
 ## Packages
 
+* [**mdast-util-split-by-heading**][mdast-util-split-by-heading]
+
+  A MDAST tool to split a markdown tree into list of subtrees representing the chapters. It relies on heading depth.
+
 * [**rebber**][rebber]
 
   transformation of MDAST into `latex` code. This code must be included inside a custom latex to be compiled.
@@ -46,11 +50,11 @@ This project uses [Jest][jest] for testing. It is recommended to install the Jes
 
 * [**rehype-footnotes-title**][rehype-footnotes-title]
 
-  TODO: README
+  This plugin adds a `title` attribute to the footnote links, mainly for accessibility purpose.
 
 * [**rehype-html-blocks**][rehype-html-blocks]
 
-  TODO: README
+  This plugin wraps (multi-line) raw HTML in `p`.
 
 * [**remark-align**][remark-align]
 
@@ -74,7 +78,7 @@ This project uses [Jest][jest] for testing. It is recommended to install the Jes
 
 * [**remark-escape-escaped**][remark-escape-escaped]
 
-  TODO: README
+  This plugin escapes HTML entities from Markdown input.
 
 * [**remark-grid-tables**][remark-grid-tables]
 
@@ -86,7 +90,7 @@ This project uses [Jest][jest] for testing. It is recommended to install the Jes
 
 * [**remark-heading-trailing-spaces**][remark-heading-trailing-spaces]
 
-  TODO: README
+  This plugin removes trailing spaces from Markdown headers.
 
 * [**remark-iframes**][remark-iframes]
 
@@ -98,7 +102,7 @@ This project uses [Jest][jest] for testing. It is recommended to install the Jes
 
 * [**remark-numbered-footnotes**][remark-numbered-footnotes]
 
-  TODO: README
+  This plugin changes how [mdast][mdast] footnotes are displayed by using sequential numbers as footnote references instead of user-specified strings.
 
 * [**remark-sub-super**][remark-sub-super]
 
@@ -148,6 +152,7 @@ This project uses [Jest][jest] for testing. It is recommended to install the Jes
 
 [jest]: https://facebook.github.io/jest/
 
+[mdast-util-split-by-heading]: https://github.com/zestedesavoir/zmarkdown/tree/master/packages/mdast-util-split-by-heading#mdast-util-split-by-heading--
 [rebber]: https://github.com/zestedesavoir/zmarkdown/tree/master/packages/rebber#rebber--
 [rebber-plugins]: https://github.com/zestedesavoir/zmarkdown/tree/master/packages/rebber-plugins#rebber-plugins--
 [remark-abbr]: https://github.com/zestedesavoir/zmarkdown/tree/master/packages/remark-abbr#remark-abbr--

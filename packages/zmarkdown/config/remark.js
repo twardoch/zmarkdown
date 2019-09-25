@@ -17,6 +17,34 @@ const textrPermille = require('typographic-permille/src')
 const textrQuestionMark = require('typographic-question-mark/src')
 const textrSemicolon = require('typographic-semicolon/src')
 
+const gh = require('hast-util-sanitize/lib/github')
+const katex = require('./sanitize-katex')
+const merge = require('deepmerge')
+
+const sanitizeConfig = merge.all([gh, katex, {
+  tagNames: ['span', 'abbr', 'figure', 'figcaption', 'iframe'],
+  attributes: {
+    a: ['ariaHidden', 'class', 'className'],
+    div: ['id', 'class', 'className'],
+    span: ['id'],
+    h1: ['ariaHidden'],
+    h2: ['ariaHidden'],
+    h3: ['ariaHidden'],
+    abbr: ['title'],
+    img: ['class'],
+    code: ['className'],
+    th: ['colspan', 'colSpan', 'rowSpan', 'rowspan'],
+    td: ['colspan', 'colSpan', 'rowSpan', 'rowspan'],
+    iframe: ['allowfullscreen', 'frameborder', 'height', 'src', 'width'],
+  },
+  protocols: {
+    href: ['ftp', 'dav', 'sftp', 'magnet', 'tftp', 'view-source'],
+    src: ['ftp', 'dav', 'sftp', 'tftp'],
+  },
+  clobberPrefix: '',
+  clobber: [],
+}])
+
 const remarkConfig = {
   maxNesting: 100,
   reParse: {
@@ -177,84 +205,46 @@ const remarkConfig = {
 
   iframes: {
     'www.dailymotion.com': {
-      tag: 'iframe',
       width: 480,
       height: 270,
       disabled: false,
-      replace: [
-        ['video/', 'embed/video/'],
-      ],
-      thumbnail: {
-        format: 'http://www.dailymotion.com/thumbnail/video/{id}',
-        id: '.+/(.+)$',
-      },
+      oembed: 'https://www.dailymotion.com/services/oembed',
     },
     'www.vimeo.com': {
-      tag: 'iframe',
       width: 500,
       height: 281,
       disabled: false,
-      replace: [
-        ['http://', 'https://'],
-        ['www.', ''],
-        ['vimeo.com/', 'player.vimeo.com/video/'],
-      ],
+      oembed: 'https://vimeo.com/api/oembed.json',
     },
     'vimeo.com': {
-      tag: 'iframe',
       width: 500,
       height: 281,
       disabled: false,
-      replace: [
-        ['http://', 'https://'],
-        ['www.', ''],
-        ['vimeo.com/', 'player.vimeo.com/video/'],
-      ],
+      oembed: 'https://vimeo.com/api/oembed.json',
     },
     'www.youtube.com': {
-      tag: 'iframe',
       width: 560,
       height: 315,
       disabled: false,
-      replace: [
-        ['watch?v=', 'embed/'],
-        ['http://', 'https://'],
-      ],
-      thumbnail: {
-        format: 'http://img.youtube.com/vi/{id}/0.jpg',
-        id: '.+/(.+)$',
-      },
-      removeAfter: '&',
+      oembed: 'https://www.youtube.com/oembed',
     },
     'youtube.com': {
-      tag: 'iframe',
       width: 560,
       height: 315,
       disabled: false,
-      replace: [
-        ['watch?v=', 'embed/'],
-        ['http://', 'https://'],
-      ],
-      thumbnail: {
-        format: 'http://img.youtube.com/vi/{id}/0.jpg',
-        id: '.+/(.+)$',
-      },
-      removeAfter: '&',
+      oembed: 'https://www.youtube.com/oembed',
     },
     'youtu.be': {
-      tag: 'iframe',
       width: 560,
       height: 315,
       disabled: false,
-      replace: [
-        ['watch?v=', 'embed/'],
-        ['youtu.be', 'www.youtube.com/embed'],
-      ],
-      thumbnail: {
-        format: 'http://img.youtube.com/vi/{id}/0.jpg',
-        id: '.+/(.+)$',
-      },
-      removeAfter: '&',
+      oembed: 'https://www.youtube.com/oembed',
+    },
+    'soundcloud.com': {
+      width: 500,
+      height: 305,
+      disabled: false,
+      oembed: 'https://soundcloud.com/oembed',
     },
     'www.ina.fr': {
       tag: 'iframe',
@@ -325,10 +315,17 @@ const remarkConfig = {
 
   imagesDownload: {
     disabled: true,
+    defaultImagePath: 'black.png',
+    defaultOn: {
+      statusCode: true,
+      mimeType: false,
+      fileTooBig: false,
+    },
     downloadDestination: './img/',
     maxlength: 1000000,
     dirSizeLimit: 10000000,
   },
+  sanitize: sanitizeConfig,
 }
 
 module.exports = remarkConfig
