@@ -34,5 +34,6 @@
     "mdast-util-definitions": "^3.0.1",
     "trim-lines": "^1.1.3",
     "xtend": "^4.0.2"
-  }
+  },
+  "gitHead": "162b7820f4b22a9173598a3d95b6f6e7f322f61a"
 }

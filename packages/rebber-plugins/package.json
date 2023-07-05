@@ -31,13 +31,14 @@
     "xtend": "^4.0.2"
   },
   "devDependencies": {
-    "rebber": "file:../rebber",
-    "remark-abbr": "file:../remark-abbr",
-    "remark-align": "file:../remark-align",
-    "remark-captions": "file:../remark-captions",
-    "remark-emoticons": "file:../remark-emoticons",
-    "remark-grid-tables": "file:../remark-grid-tables",
-    "remark-numbered-footnotes": "file:../remark-numbered-footnotes",
-    "remark-sub-super": "file:../remark-sub-super"
-  }
+    "rebber": "^5.4.0",
+    "remark-abbr": "^1.4.1",
+    "remark-align": "^1.2.14",
+    "remark-captions": "^2.2.3",
+    "remark-emoticons": "^2.3.1",
+    "remark-grid-tables": "^2.2.0",
+    "remark-numbered-footnotes": "^3.0.0",
+    "remark-sub-super": "^1.0.20"
+  },
+  "gitHead": "162b7820f4b22a9173598a3d95b6f6e7f322f61a"
 }
